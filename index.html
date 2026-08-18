@@ -383,10 +383,58 @@
       currentModule = mod;
       switchView('view-concepts');
       document.getElementById('concepts-title').innerText = `Module ${mod} Concepts`;
-      document.getElementById('concepts-content').innerHTML = `
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-          <p class="text-slate-300 text-sm">Interactive visualization and concepts active for Module ${mod}.</p>
-        </div>`;
+
+let content = '';
+if (mod === 1) {
+    content = `
+        <div class="space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-xl font-bold text-indigo-400 mb-2">Instruction Set Architecture & Datapath</h3>
+                <p class="text-slate-300 text-sm mb-4">Explore registers, buses, and the execution steps of computer instructions.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <span class="text-indigo-300 font-semibold">1. Fetch Cycle</span>
+                        <p class="text-slate-400 mt-1 text-xs">Retrieves instruction from memory using Program Counter (PC).</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <span class="text-indigo-300 font-semibold">2. Decode Cycle</span>
+                        <p class="text-slate-400 mt-1 text-xs">Control Unit decodes the opcode and determines required operands.</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <span class="text-indigo-300 font-semibold">3. Execute Cycle</span>
+                        <p class="text-slate-400 mt-1 text-xs">ALU performs calculations and updates status registers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+} else if (mod === 2) {
+    content = `
+        <div class="space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-xl font-bold text-emerald-400 mb-2">Computer Arithmetic & ALU</h3>
+                <p class="text-slate-300 text-sm mb-4">Binary number representations, Booth's algorithm, and IEEE 754 floating-point.</p>
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-sm text-slate-300">
+                    Interactive Booth's Multiplier and Divider simulation panels active.
+                </div>
+            </div>
+        </div>
+    `;
+} else {
+    content = `
+        <div class="space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-xl font-bold text-blue-400 mb-2">Module ${mod} Core Concepts</h3>
+                <p class="text-slate-300 text-sm mb-4">Detailed architectural breakdown and interactive visualizer modules.</p>
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-sm text-slate-300">
+                    Interactive simulation boards loaded for Module ${mod}.
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+document.getElementById('concepts-content').innerHTML = content;
     }
 
     function startQuiz(mod) {
