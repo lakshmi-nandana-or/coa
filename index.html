@@ -389,33 +389,19 @@ if (mod === 1) {
     content = `
         <div class="space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xl font-bold text-indigo-400 mb-2">Instruction Set Architecture & Datapath</h3>
-                <p class="text-slate-300 text-sm mb-4">Explore registers, buses, and the execution steps of computer instructions.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                        <span class="text-indigo-300 font-semibold">1. Fetch Cycle</span>
-                        <p class="text-slate-400 mt-1 text-xs">Retrieves instruction from memory using Program Counter (PC).</p>
-                    </div>
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                        <span class="text-indigo-300 font-semibold">2. Decode Cycle</span>
-                        <p class="text-slate-400 mt-1 text-xs">Control Unit decodes the opcode and determines required operands.</p>
-                    </div>
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                        <span class="text-indigo-300 font-semibold">3. Execute Cycle</span>
-                        <p class="text-slate-400 mt-1 text-xs">ALU performs calculations and updates status registers.</p>
-                    </div>
+                <h3 class="text-xl font-bold text-indigo-400 mb-2">Interactive Instruction Cycle Simulator</h3>
+                <p class="text-slate-300 text-sm mb-6">Click the buttons below to step through the CPU instruction cycle and see the active datapath signals.</p>
+                
+                <div class="grid grid-cols-4 gap-3 mb-6">
+                    <button onclick="runCycleStep(1)" id="btn-step-1" class="p-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm transition shadow-lg">1. Fetch</button>
+                    <button onclick="runCycleStep(2)" id="btn-step-2" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">2. Decode</button>
+                    <button onclick="runCycleStep(3)" id="btn-step-3" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">3. Execute</button>
+                    <button onclick="runCycleStep(4)" id="btn-step-4" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">4. Writeback</button>
                 </div>
-            </div>
-        </div>
-    `;
-} else if (mod === 2) {
-    content = `
-        <div class="space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xl font-bold text-emerald-400 mb-2">Computer Arithmetic & ALU</h3>
-                <p class="text-slate-300 text-sm mb-4">Binary number representations, Booth's algorithm, and IEEE 754 floating-point.</p>
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-sm text-slate-300">
-                    Interactive Booth's Multiplier and Divider simulation panels active.
+
+                <div id="simulation-screen" class="bg-slate-900 border border-indigo-500/40 rounded-xl p-6 text-indigo-200 font-mono text-sm shadow-inner transition-all duration-300">
+                    <span class="text-indigo-400 font-bold uppercase tracking-wider block mb-2">[ Step 1: Fetch Cycle Active ]</span>
+                    Program Counter (PC) $\rightarrow$ MAR $\rightarrow$ Memory Access $\rightarrow$ MDR $\rightarrow$ CIR. Instruction opcode loaded into the Control Unit.
                 </div>
             </div>
         </div>
@@ -424,17 +410,41 @@ if (mod === 1) {
     content = `
         <div class="space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xl font-bold text-blue-400 mb-2">Module ${mod} Core Concepts</h3>
-                <p class="text-slate-300 text-sm mb-4">Detailed architectural breakdown and interactive visualizer modules.</p>
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-sm text-slate-300">
-                    Interactive simulation boards loaded for Module ${mod}.
-                </div>
+                <h3 class="text-xl font-bold text-emerald-400 mb-2">Module ${mod} Interactive Simulation</h3>
+                <p class="text-slate-300 text-sm mb-4">Interactive module components and visualizer controls active.</p>
             </div>
         </div>
     `;
 }
 
 document.getElementById('concepts-content').innerHTML = content;
+function runCycleStep(step) {
+    // Reset button styles
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`btn-step-${i}`);
+        if (btn) {
+            btn.className = i === step 
+                ? "p-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm transition shadow-lg scale-105" 
+                : "p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600";
+        }
+    }
+
+    const screens = {
+        1: '<span class="text-indigo-400 font-bold uppercase tracking-wider block mb-2">[ Step 1: Fetch Cycle Active ]</span>Program Counter (PC) $\rightarrow$ MAR $\rightarrow$ Memory Access $\rightarrow$ MDR $\rightarrow$ CIR. Instruction opcode loaded into the Control Unit.',
+        2: '<span class="text-amber-400 font-bold uppercase tracking-wider block mb-2">[ Step 2: Decode Cycle Active ]</span>Control Unit analyzes the opcode in CIR. Identifies instruction type, source registers, and prepares ALU control signals.',
+        3: '<span class="text-emerald-400 font-bold uppercase tracking-wider block mb-2">[ Step 3: Execute Cycle Active ]</span>ALU receives operands from registers, performs arithmetic/logic operations, and sets status flags (Zero, Carry, Overflow).',
+        4: '<span class="text-blue-400 font-bold uppercase tracking-wider block mb-2">[ Step 4: Writeback Cycle Active ]</span>Result data written back to destination register or memory location. Program Counter (PC) increments for the next instruction.'
+    };
+
+    const screen = document.getElementById('simulation-screen');
+    if (screen) {
+        screen.style.opacity = '0.3';
+        setTimeout(() => {
+            screen.innerHTML = screens[step];
+            screen.style.opacity = '1';
+        }, 150);
+    }
+}
     }
 
     function startQuiz(mod) {
