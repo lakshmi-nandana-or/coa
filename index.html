@@ -1,560 +1,618 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COA Visualizer & Quiz</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COA Visualizer & Quiz Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
-  <!-- NAVBAR -->
-  <nav id="navbar" class="hidden bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-    <div class="flex items-center space-x-3 cursor-pointer" onclick="showDashboard()">
-      <i class="fa-solid fa-microchip text-indigo-400 text-2xl"></i>
-      <span class="font-bold text-xl text-white">COA Visualizer & Quiz</span>
-    </div>
-    <div class="flex items-center space-x-4">
-      <button onclick="openProfileModal()" class="flex items-center space-x-2 bg-slate-700/60 hover:bg-slate-700 border border-slate-600 px-3 py-1.5 rounded-xl transition">
-        <div id="nav-avatar" class="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold text-white">L</div>
-        <span id="nav-user-name" class="text-xs text-slate-200 font-medium">User</span>
-      </button>
-      <button onclick="logout()" class="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl hover:bg-red-500/30">
-        <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
-      </button>
-    </div>
-  </nav>
-
-  <main class="max-w-6xl mx-auto p-4 sm:p-6">
-
-    <!-- 1. AUTH VIEW -->
-    <section id="view-auth" class="min-h-[80vh] flex items-center justify-center">
-      <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl max-w-md w-full">
-        <div class="text-center mb-8">
-          <div class="inline-flex p-4 bg-indigo-600/20 text-indigo-400 rounded-2xl mb-4 border border-indigo-500/30">
-            <i class="fa-solid fa-cpu text-4xl"></i>
-          </div>
-          <h1 class="text-2xl font-bold text-white">COA Student Portal</h1>
-          <p class="text-slate-400 text-sm mt-1">Computer Organization & Architecture</p>
+    <!-- NAVBAR -->
+    <nav id="navbar" class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center sticky top-0 z-50 hidden">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="showDashboard()">
+            <i class="fa-solid fa-microchip text-indigo-400 text-2xl"></i>
+            <span class="font-bold text-xl text-white">COA Visualizer & Quiz</span>
         </div>
-        <form onsubmit="handleLogin(event)" class="space-y-5">
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Student Full Name</label>
-            <input type="text" id="input-name" required placeholder="e.g. Lakshmi" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Student Reg No / Serial No</label>
-            <input type="text" id="input-srno" required placeholder="e.g. 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
-          </div>
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl shadow-lg transition">
-            Enter Learning Portal <i class="fa-solid fa-arrow-right ml-2"></i>
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- 2. DASHBOARD VIEW -->
-    <section id="view-dashboard" class="hidden space-y-8">
-      <!-- User Performance Banner -->
-      <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-white">Welcome, <span id="dash-user-name" class="text-indigo-400">Student</span>!</h2>
-            <p id="dash-user-srno" class="text-slate-400 text-xs mt-1">Reg No: -</p>
-          </div>
-          <button onclick="openProfileModal()" class="self-start sm:self-auto bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-300 text-xs px-4 py-2 rounded-xl">
-            <i class="fa-solid fa-id-card mr-2"></i> View Full Analytics
-          </button>
-        </div>
-
-        <!-- Metric Cards -->
-        <div class="grid grid-cols-3 gap-3">
-          <div class="bg-slate-900/60 border border-slate-700/60 p-3 rounded-xl text-center">
-            <span class="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">Tests Attempted</span>
-            <p id="metric-attempts" class="text-lg sm:text-2xl font-bold text-white mt-1">0</p>
-          </div>
-          <div class="bg-slate-900/60 border border-slate-700/60 p-3 rounded-xl text-center">
-            <span class="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">High Score</span>
-            <p id="metric-high-score" class="text-lg sm:text-2xl font-bold text-indigo-400 mt-1">0 / 40</p>
-          </div>
-          <div class="bg-slate-900/60 border border-slate-700/60 p-3 rounded-xl text-center">
-            <span class="text-[10px] sm:text-xs text-slate-400 uppercase font-semibold">Avg Accuracy</span>
-            <p id="metric-accuracy" class="text-lg sm:text-2xl font-bold text-emerald-400 mt-1">0%</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modules Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between">
-          <div>
-            <span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs font-semibold px-3 py-1 rounded-full">Module 1</span>
-            <h3 class="text-xl font-bold text-white my-3">Fundamentals of Computer Organization</h3>
-            <p class="text-slate-400 text-sm mb-6">Functional units, Von Neumann Architecture, Bus Structures, CPU Performance Equation, and MIPS ISA.</p>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <button onclick="showConcepts(1)" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-eye mr-2 text-indigo-400"></i> View Concepts
+        <div class="flex items-center space-x-3">
+            <button onclick="showProfile()" class="text-xs bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3 py-1.5 rounded-xl hover:bg-indigo-600/30 transition">
+                <i class="fa-solid fa-user-gear mr-1"></i> Profile & Analytics
             </button>
-            <button onclick="startQuiz(1)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-stopwatch mr-2"></i> Start Quiz
+            <span id="nav-username" class="text-xs text-slate-300 font-medium bg-slate-700/60 px-3 py-1.5 rounded-xl hidden sm:inline-block"></span>
+            <button onclick="logout()" class="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl hover:bg-red-500/30 transition">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
             </button>
-          </div>
         </div>
+    </nav>
 
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between">
-          <div>
-            <span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 text-xs font-semibold px-3 py-1 rounded-full">Module 2</span>
-            <h3 class="text-xl font-bold text-white my-3">Processor Structure & Function</h3>
-            <p class="text-slate-400 text-sm mb-6">CPU Internals, Instruction Cycle, Control Units, ALU Design, Pipelining, Hazards, and RISC vs CISC.</p>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <button onclick="showConcepts(2)" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-eye mr-2 text-purple-400"></i> View Concepts
-            </button>
-            <button onclick="startQuiz(2)" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-stopwatch mr-2"></i> Start Quiz
-            </button>
-          </div>
-        </div>
-      </div>
+    <main class="max-w-4xl mx-auto p-4 sm:p-6">
 
-      <!-- Previous Quiz Attempts Table -->
-      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-4">
-        <div class="flex justify-between items-center">
-          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-history text-indigo-400 mr-2"></i>Attempt History</h3>
-          <button onclick="clearHistory()" class="text-xs text-red-400 hover:underline">Clear History</button>
-        </div>
+        <!-- 1. AUTH VIEW -->
+        <section id="view-auth" class="min-h-[80vh] flex items-center justify-center">
+            <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl max-w-md w-full">
+                <div class="text-center mb-8">
+                    <div class="inline-flex p-4 bg-indigo-600/20 text-indigo-400 rounded-2xl mb-4 border border-indigo-500/30">
+                        <i class="fa-solid fa-cpu text-4xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">COA Student Portal</h1>
+                    <p class="text-slate-400 text-sm mt-1">Computer Organization & Architecture</p>
+                </div>
+                <form onsubmit="handleLogin(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Student Full Name</label>
+                        <input type="text" id="input-name" required placeholder="e.g. Alex Johnson" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Reg No / Serial No</label>
+                        <input type="text" id="input-srno" required placeholder="e.g. SEC26CS042" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl shadow-lg transition">
+                        Enter Learning Portal <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
 
-        <div id="history-container" class="overflow-x-auto">
-          <!-- History content dynamically rendered -->
-        </div>
-      </div>
-    </section>
+        <!-- 2. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="space-y-8 hidden">
+            <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Welcome back, <span id="dash-name" class="text-indigo-400"></span>!</h2>
+                    <p class="text-slate-400 text-xs mt-1" id="dash-srno"></p>
+                </div>
+                <button onclick="showProfile()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition">
+                    <i class="fa-solid fa-chart-line mr-2 text-indigo-400"></i> View Performance Stats
+                </button>
+            </div>
 
-    <!-- 3. CONCEPTS VIEW -->
-    <section id="view-concepts" class="hidden space-y-6">
-      <button onclick="showDashboard()" class="text-xs text-indigo-400 hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard</button>
-      <h2 id="concepts-title" class="text-2xl font-bold text-white">Module Concepts</h2>
-      <div id="concepts-content"></div>
-    </section>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs font-semibold px-3 py-1 rounded-full">Module 1</span>
+                        <h3 class="text-xl font-bold text-white my-3">Fundamentals of Computer Organization</h3>
+                        <p class="text-slate-400 text-sm mb-6">Functional units, instruction cycle, and interactive stack mechanics.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showConcepts(1)" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                            <i class="fa-solid fa-eye mr-2 text-indigo-400"></i> View Visualizers
+                        </button>
+                        <button onclick="startQuiz(1)" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                            <i class="fa-solid fa-stopwatch mr-2"></i> Start Quiz
+                        </button>
+                    </div>
+                </div>
 
-    <!-- 4. QUIZ VIEW -->
-    <section id="view-quiz" class="hidden space-y-6">
-      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex items-center justify-between">
-        <div>
-          <span id="quiz-module-badge" class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Module 1 Quiz</span>
-          <h2 class="text-xl font-bold text-white mt-1">Evaluated Quiz</h2>
-        </div>
-        <div class="flex items-center space-x-6">
-          <div class="text-center">
-            <span class="text-xs text-slate-400 block uppercase">Question</span>
-            <span id="quiz-progress" class="text-lg font-bold text-white">1 / 10</span>
-          </div>
-          <div class="text-center">
-            <span class="text-xs text-slate-400 block uppercase">Time Left</span>
-            <span id="quiz-timer" class="text-lg font-mono font-bold text-amber-400">60s</span>
-          </div>
-        </div>
-      </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 text-xs font-semibold px-3 py-1 rounded-full">Module 2</span>
+                        <h3 class="text-xl font-bold text-white my-3">Processor Structure & Function</h3>
+                        <p class="text-slate-400 text-sm mb-6">Control Units, RISC/CISC, and 5-stage pipeline.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showConcepts(2)" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                            <i class="fa-solid fa-eye mr-2 text-purple-400"></i> View Visualizers
+                        </button>
+                        <button onclick="startQuiz(2)" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                            <i class="fa-solid fa-stopwatch mr-2"></i> Start Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-6">
-        <h3 id="quiz-question-text" class="text-lg font-semibold text-white">Question goes here</h3>
-        <div id="quiz-options-container" class="grid grid-cols-1 gap-3"></div>
-        <div class="flex justify-end pt-4 border-t border-slate-700/60">
-          <button onclick="submitAnswer()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-6 py-3 rounded-xl">
-            Submit & Next <i class="fa-solid fa-chevron-right ml-1"></i>
-          </button>
-        </div>
-      </div>
-    </section>
+        <!-- 3. CONCEPTS VIEW -->
+        <section id="view-concepts" class="space-y-6 hidden">
+            <button onclick="showDashboard()" class="text-xs text-indigo-400 hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard</button>
+            <h2 id="concept-title" class="text-2xl font-bold text-white"></h2>
+            <div id="concept-content" class="space-y-6"></div>
+        </section>
 
-    <!-- 5. RESULTS VIEW -->
-    <section id="view-results" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center max-w-2xl mx-auto space-y-6">
-      <h2 class="text-2xl font-bold text-white">Quiz Evaluation Completed!</h2>
-      <div class="grid grid-cols-3 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-700">
-        <div>
-          <span class="text-xs text-slate-400 block uppercase">Final Score</span>
-          <span id="result-score" class="text-2xl font-bold text-indigo-400">0 / 40</span>
-        </div>
-        <div>
-          <span class="text-xs text-slate-400 block uppercase">Accuracy</span>
-          <span id="result-accuracy" class="text-2xl font-bold text-emerald-400">0%</span>
-        </div>
-        <div>
-          <span class="text-xs text-slate-400 block uppercase">Correct/Wrong</span>
-          <span id="result-breakdown" class="text-2xl font-bold text-white">0 / 0</span>
-        </div>
-      </div>
-      <p class="text-xs text-slate-400">Your score has been saved to your profile history log.</p>
-      <button onclick="showDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-8 py-3 rounded-xl">
-        Return to Dashboard
-      </button>
-    </section>
+        <!-- 4. PROFILE & ANALYTICS VIEW -->
+        <section id="view-profile" class="space-y-6 hidden">
+            <button onclick="showDashboard()" class="text-xs text-indigo-400 hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard</button>
+            
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+                <div class="flex items-center space-x-4 border-b border-slate-700 pb-6">
+                    <div class="w-16 h-16 bg-indigo-600/20 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-indigo-400 text-2xl font-bold" id="profile-avatar">
+                        JD
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white" id="profile-name">Student Name</h2>
+                        <p class="text-slate-400 text-xs mt-0.5" id="profile-srno">Reg No: </p>
+                    </div>
+                </div>
 
-    <!-- PROFILE MODAL -->
-    <div id="profile-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-6 relative">
-        <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-chart-pie text-indigo-400 mr-2"></i>Performance Analytics</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-semibold block">Quizzes Taken</span>
+                            <span id="stat-total-quizzes" class="text-2xl font-bold text-white mt-1 block">0</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-semibold block">Best Score</span>
+                            <span id="stat-best-score" class="text-2xl font-bold text-indigo-400 mt-1 block">0 / 40</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-semibold block">Avg Accuracy</span>
+                            <span id="stat-avg-accuracy" class="text-2xl font-bold text-emerald-400 mt-1 block">0%</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-semibold block">Total Correct</span>
+                            <span id="stat-total-correct" class="text-2xl font-bold text-purple-400 mt-1 block">0</span>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="flex items-center space-x-4">
-          <div id="modal-avatar" class="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-xl font-bold text-white shadow-lg">L</div>
-          <div>
-            <h3 id="modal-user-name" class="text-lg font-bold text-white">Student</h3>
-            <p id="modal-user-srno" class="text-xs text-slate-400">Reg No: -</p>
-          </div>
-        </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-clock-rotate-left text-indigo-400 mr-2"></i>Recent Quiz Attempts</h3>
+                    <div id="quiz-history-list" class="space-y-2">
+                        <!-- History injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-700/60 text-xs">
-          <div class="flex justify-between py-1 border-b border-slate-800">
-            <span class="text-slate-400">Total Attempts</span>
-            <span id="modal-total-attempts" class="font-bold text-white">0</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-slate-800">
-            <span class="text-slate-400">Highest Score Achieved</span>
-            <span id="modal-high-score" class="font-bold text-indigo-400">0 / 40</span>
-          </div>
-          <div class="flex justify-between py-1">
-            <span class="text-slate-400">Overall Average Accuracy</span>
-            <span id="modal-avg-accuracy" class="font-bold text-emerald-400">0%</span>
-          </div>
-        </div>
+        <!-- 5. QUIZ VIEW -->
+        <section id="view-quiz" class="space-y-6 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30" id="quiz-mod-badge">Module Quiz</span>
+                    <h2 class="text-xl font-bold text-white mt-1">Evaluated Quiz</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block uppercase">Question</span>
+                        <span id="quiz-progress" class="text-lg font-bold text-white">1 / 10</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block uppercase">Time Left</span>
+                        <span id="quiz-timer" class="text-lg font-mono font-bold text-amber-400">60s</span>
+                    </div>
+                </div>
+            </div>
 
-        <button onclick="closeProfileModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 rounded-xl transition">
-          Close Profile
-        </button>
-      </div>
-    </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-6 shadow-xl">
+                <h3 id="quiz-question-text" class="text-lg font-semibold text-white"></h3>
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-3"></div>
+                <div class="flex justify-end pt-4 border-t border-slate-700/60">
+                    <button onclick="submitAnswer()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-6 py-3 rounded-xl transition">
+                        Submit & Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-  </main>
+        <!-- 6. RESULTS VIEW -->
+        <section id="view-results" class="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center max-w-2xl mx-auto space-y-6 shadow-xl hidden">
+            <h2 class="text-2xl font-bold text-white">Quiz Evaluation Completed!</h2>
+            <div class="grid grid-cols-3 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-700">
+                <div>
+                    <span class="text-xs text-slate-400 block uppercase">Final Score</span>
+                    <span id="res-score" class="text-2xl font-bold text-indigo-400">0 / 40</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 block uppercase">Accuracy</span>
+                    <span id="res-accuracy" class="text-2xl font-bold text-emerald-400">0%</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 block uppercase">Correct/Wrong</span>
+                    <span id="res-breakdown" class="text-2xl font-bold text-white">0 / 0</span>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-3">
+                <button onclick="showProfile()" class="bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold px-6 py-3 rounded-xl transition">
+                    View Analytics
+                </button>
+                <button onclick="showDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-6 py-3 rounded-xl transition">
+                    Return to Dashboard
+                </button>
+            </div>
+        </section>
 
-  <script>
-    const questionBank = {
-      1: [
-        { q: "Which functional unit is directly responsible for coordinating all operations using control signals?", options: ["ALU", "Control Unit", "Memory Unit", "Input Unit"], answer: 1 },
-        { q: "In Von Neumann architecture, what primary bottleneck limits CPU performance?", options: ["Shared bus for data and instructions", "Lack of registers", "Fixed clock frequency", "Multiple ALU requirement"], answer: 0 },
-        { q: "Given Clock Rate = 2 GHz, Instruction Count = 50 Million, and Average CPI = 4. What is CPU execution time?", options: ["0.05 s", "0.10 s", "0.20 s", "0.50 s"], answer: 1 },
-        { q: "In MIPS R-type instruction format, how many bits are allocated for the opcode?", options: ["5 bits", "6 bits", "16 bits", "32 bits"], answer: 1 },
-        { q: "If Register R2 = 500 and Memory[500] = 800, what operand value is fetched using Register Indirect mode with R2?", options: ["500", "800", "1300", "250"], answer: 1 },
-        { q: "Which addressing mode embeds the actual operand directly inside the instruction encoding?", options: ["Direct", "Register", "Immediate", "Indexed"], answer: 2 },
-        { q: "A memory system with 16 address lines can address a maximum of how many locations?", options: ["16,384", "65,536", "32,768", "1,048,576"], answer: 1 },
-        { q: "Which register holds the address of the NEXT instruction to be fetched from memory?", options: ["Instruction Register (IR)", "Memory Address Register (MAR)", "Program Counter (PC)", "Accumulator (ACC)"], answer: 2 },
-        { q: "Which format uses implicit stack-based operands with no explicit address fields?", options: ["Zero-address format", "One-address format", "Two-address format", "Three-address format"], answer: 0 },
-        { q: "What is the primary role of the MIPS '$zero' ($0) register?", options: ["Holds return address", "Always holds constant value 0", "Stack pointer reference", "Temporary storage"], answer: 1 }
-      ],
-      2: [
-        { q: "Which sub-cycle is conditionally executed only when indirect addressing is specified?", options: ["Fetch Cycle", "Indirect Cycle", "Execute Cycle", "Interrupt Cycle"], answer: 1 },
-        { q: "A hardwired control unit generates control signals using which type of physical circuitry?", options: ["Control Memory ROM", "Combinational Logic Gates", "Microcode Decoders", "Stack Arrays"], answer: 1 },
-        { q: "In a 4-bit Full Adder circuit, what is the Boolean expression for the SUM output?", options: ["A AND B AND Cin", "A XOR B XOR Cin", "AB + BCin + ACin", "A OR B OR Cin"], answer: 1 },
-        { q: "Which PSW flag is set when a signed binary arithmetic operation produces a result exceeding destination capacity?", options: ["Carry Flag (C)", "Zero Flag (Z)", "Sign Flag (S)", "Overflow Flag (V)"], answer: 3 },
-        { q: "What is the primary cause of a RAW (Read-After-Write) data hazard in a pipeline?", options: ["Two instructions using memory simultaneously", "Instruction needing a value before a prior instruction writes it back", "Unresolved conditional branch outcome", "Register file port limitation"], answer: 1 },
-        { q: "How does Forwarding (Bypassing) resolve pipeline data hazards efficiently?", options: ["Stalls the pipeline for 3 clock cycles", "Flushes the pipeline stages", "Routes ALU results directly from EX/MEM stage to dependent EX stage", "Re-executes the program"], answer: 2 },
-        { q: "Which architecture philosophy relies on fixed-length, simple single-cycle instructions and a load-store structure?", options: ["CISC", "RISC", "VLIW", "Stack Processor"], answer: 1 },
-        { q: "In a classic 5-stage RISC pipeline, what does the 'MEM' stage handle?", options: ["Instruction Fetching", "Register Decoding", "ALU Execution", "Data Memory Read or Write"], answer: 3 },
-        { q: "What hardware component holds the address of the current microinstruction in a microprogrammed control unit?", options: ["Instruction Register (IR)", "Control Address Register (CAR)", "Control Buffer Register (CBR)", "Program Status Word (PSW)"], answer: 1 },
-        { q: "Why is hardwired control preferred in modern RISC processor design?", options: ["Supports microcode updates", "Cheaper for complex instruction sets", "Significantly faster execution due to pure hardware logic", "Allows variable-length instructions"], answer: 2 }
-      ]
-    };
+    </main>
 
-    let currentUser = null;
-    let currentModule = 1;
-    let quizState = { questions: [], index: 0, score: 0, correct: 0, wrong: 0, selected: null, timer: null, timeLeft: 60 };
+    <script>
+        const questionBank = {
+            1: [
+                { q: "Which functional unit is directly responsible for coordinating all operations using control signals?", options: ["ALU", "Control Unit", "Memory Unit", "Input Unit"], answer: 1 },
+                { q: "In Von Neumann architecture, what primary bottleneck limits CPU performance?", options: ["Shared bus for data and instructions", "Lack of registers", "Fixed clock frequency", "Multiple ALU requirement"], answer: 0 },
+                { q: "Given Clock Rate = 2 GHz, Instruction Count = 50 Million, and Average CPI = 4. What is CPU execution time?", options: ["0.05 s", "0.10 s", "0.20 s", "0.50 s"], answer: 1 },
+                { q: "In MIPS R-type instruction format, how many bits are allocated for the opcode?", options: ["5 bits", "6 bits", "16 bits", "32 bits"], answer: 1 },
+                { q: "If Register R2 = 500 and Memory[500] = 800, what operand value is fetched using Register Indirect mode with R2?", options: ["500", "800", "1300", "250"], answer: 1 },
+                { q: "Which addressing mode embeds the actual operand directly inside the instruction encoding?", options: ["Direct", "Register", "Immediate", "Indexed"], answer: 2 },
+                { q: "A memory system with 16 address lines can address a maximum of how many locations?", options: ["16,384", "65,536", "32,768", "1,048,576"], answer: 1 },
+                { q: "Which register holds the address of the NEXT instruction to be fetched from memory?", options: ["Instruction Register (IR)", "Memory Address Register (MAR)", "Program Counter (PC)", "Accumulator (ACC)"], answer: 2 },
+                { q: "Which format uses implicit stack-based operands with no explicit address fields?", options: ["Zero-address format", "One-address format", "Two-address format", "Three-address format"], answer: 0 },
+                { q: "What is the primary role of the MIPS '$zero' ($0) register?", options: ["Holds return address", "Always holds constant value 0", "Stack pointer reference", "Temporary storage"], answer: 1 }
+            ],
+            2: [
+                { q: "Which sub-cycle is conditionally executed only when indirect addressing is specified?", options: ["Fetch Cycle", "Indirect Cycle", "Execute Cycle", "Interrupt Cycle"], answer: 1 },
+                { q: "A hardwired control unit generates control signals using which type of physical circuitry?", options: ["Control Memory ROM", "Combinational Logic Gates", "Microcode Decoders", "Stack Arrays"], answer: 1 },
+                { q: "In a 4-bit Full Adder circuit, what is the Boolean expression for the SUM output?", options: ["A AND B AND Cin", "A XOR B XOR Cin", "AB + BCin + ACin", "A OR B OR Cin"], answer: 1 },
+                { q: "Which PSW flag is set when a signed binary arithmetic operation produces a result exceeding destination capacity?", options: ["Carry Flag (C)", "Zero Flag (Z)", "Sign Flag (S)", "Overflow Flag (V)"], answer: 3 },
+                { q: "What is the primary cause of a RAW (Read-After-Write) data hazard in a pipeline?", options: ["Two instructions using memory simultaneously", "Instruction needing a value before a prior instruction writes it back", "Unresolved conditional branch outcome", "Register file port limitation"], answer: 1 },
+                { q: "How does Forwarding (Bypassing) resolve pipeline data hazards efficiently?", options: ["Stalls the pipeline for 3 clock cycles", "Flushes the pipeline stages", "Routes ALU results directly from EX/MEM stage to dependent EX stage", "Re-executes the program"], answer: 2 },
+                { q: "Which architecture philosophy relies on fixed-length, simple single-cycle instructions and a load-store structure?", options: ["CISC", "RISC", "VLIW", "Stack Processor"], answer: 1 },
+                { q: "In a classic 5-stage RISC pipeline, what does the 'MEM' stage handle?", options: ["Instruction Fetching", "Register Decoding", "ALU Execution", "Data Memory Read or Write"], answer: 3 },
+                { q: "What hardware component holds the address of the current microinstruction in a microprogrammed control unit?", options: ["Instruction Register (IR)", "Control Address Register (CAR)", "Control Buffer Register (CBR)", "Program Status Word (PSW)"], answer: 1 },
+                { q: "Why is hardwired control preferred in modern RISC processor design?", options: ["Supports microcode updates", "Cheaper for complex instruction sets", "Significantly faster execution due to pure hardware logic", "Allows variable-length instructions"], answer: 2 }
+            ]
+        };
 
-    window.onload = function() {
-      const savedUser = localStorage.getItem('coa_user');
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        showDashboard();
-      } else {
-        switchView('view-auth');
-      }
-    };
+        let currentUser = JSON.parse(localStorage.getItem('coa_user')) || null;
+        let currentModule = 1;
+        let stack = [10, 20];
+        let stackLogArr = ['Stack initialized with default values.', 'Ready for PUSH, POP, and ADD actions.'];
+        
+        let quizIndex = 0;
+        let selectedOpt = null;
+        let score = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timeLeft = 60;
+        let timerInterval = null;
 
-    function switchView(viewId) {
-      ['view-auth', 'view-dashboard', 'view-concepts', 'view-quiz', 'view-results'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(viewId).classList.remove('hidden');
+        window.onload = function() {
+            if (currentUser) {
+                showDashboard();
+            } else {
+                switchView('auth');
+            }
+        };
 
-      if (viewId !== 'view-auth') {
-        document.getElementById('navbar').classList.remove('hidden');
-      } else {
-        document.getElementById('navbar').classList.add('hidden');
-      }
-    }
+        function switchView(viewName) {
+            ['auth', 'dashboard', 'concepts', 'profile', 'quiz', 'results'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+            });
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            if (viewName !== 'auth') {
+                document.getElementById('navbar').classList.remove('hidden');
+            } else {
+                document.getElementById('navbar').classList.add('hidden');
+            }
+        }
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const name = document.getElementById('input-name').value.trim();
-      const srno = document.getElementById('input-srno').value.trim();
-      if (name && srno) {
-        currentUser = { name, srno };
-        localStorage.setItem('coa_user', JSON.stringify(currentUser));
-        showDashboard();
-      }
-    }
+        function handleLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('input-name').value;
+            const srno = document.getElementById('input-srno').value;
+            if (name && srno) {
+                currentUser = { name, srno };
+                localStorage.setItem('coa_user', JSON.stringify(currentUser));
+                showDashboard();
+            }
+        }
 
-    function logout() {
-      localStorage.removeItem('coa_user');
-      currentUser = null;
-      switchView('view-auth');
-    }
+        function logout() {
+            localStorage.removeItem('coa_user');
+            currentUser = null;
+            switchView('auth');
+        }
 
-    function showDashboard() {
-      switchView('view-dashboard');
-      document.getElementById('dash-user-name').innerText = currentUser.name;
-      document.getElementById('dash-user-srno').innerText = `Reg No: ${currentUser.srno}`;
-      document.getElementById('nav-user-name').innerText = currentUser.name;
-      document.getElementById('nav-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
-      document.getElementById('modal-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+        function showDashboard() {
+            document.getElementById('dash-name').innerText = currentUser.name;
+            document.getElementById('dash-srno').innerText = `Reg No: ${currentUser.srno}`;
+            document.getElementById('nav-username').innerText = currentUser.name;
+            switchView('dashboard');
+        }
 
-      renderAnalyticsAndHistory();
-    }
+        function showProfile() {
+            document.getElementById('profile-name').innerText = currentUser.name;
+            document.getElementById('profile-srno').innerText = `Reg No: ${currentUser.srno}`;
+            
+            // Generate Avatar Initials
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('profile-avatar').innerText = initials || 'ST';
 
-    function getHistory() {
-      return JSON.parse(localStorage.getItem('coa_history') || '[]');
-    }
+            // Load Quiz Analytics from LocalStorage
+            const historyKey = `coa_history_${currentUser.srno}`;
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
 
-    function clearHistory() {
-      localStorage.removeItem('coa_history');
-      renderAnalyticsAndHistory();
-    }
-
-    function renderAnalyticsAndHistory() {
-      const history = getHistory();
-      const total = history.length;
-      const highScore = total > 0 ? Math.max(...history.map(h => h.score)) : 0;
-      const avgAcc = total > 0 ? Math.round(history.reduce((a, c) => a + c.accuracy, 0) / total) : 0;
-
-      document.getElementById('metric-attempts').innerText = total;
-      document.getElementById('metric-high-score').innerText = `${highScore} / 40`;
-      document.getElementById('metric-accuracy').innerText = `${avgAcc}%`;
-
-      document.getElementById('modal-user-name').innerText = currentUser.name;
-      document.getElementById('modal-user-srno').innerText = `Reg No: ${currentUser.srno}`;
-      document.getElementById('modal-total-attempts').innerText = total;
-      document.getElementById('modal-high-score').innerText = `${highScore} / 40`;
-      document.getElementById('modal-avg-accuracy').innerText = `${avgAcc}%`;
-
-      const container = document.getElementById('history-container');
-      if (total === 0) {
-        container.innerHTML = `<div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700/50 text-center text-xs text-slate-400">No previous quiz records found. Complete a module evaluation quiz to track your history here!</div>`;
-      } else {
-        let html = `
-          <table class="w-full text-xs text-left text-slate-300">
-            <thead class="bg-slate-900 text-slate-400 uppercase text-[10px]">
-              <tr>
-                <th class="p-3">Date</th>
-                <th class="p-3">Module</th>
-                <th class="p-3">Score</th>
-                <th class="p-3">Accuracy</th>
-                <th class="p-3">Breakdown</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-700/50 font-mono">`;
-        history.forEach(item => {
-          html += `
-            <tr class="hover:bg-slate-700/30">
-              <td class="p-3 text-slate-400">${item.date}</td>
-              <td class="p-3"><span class="text-indigo-400 font-bold">Module ${item.module}</span></td>
-              <td class="p-3 font-bold text-white">${item.score} / 40</td>
-              <td class="p-3"><span class="text-emerald-400">${item.accuracy}%</span></td>
-              <td class="p-3">${item.correct} Correct / ${item.wrong} Wrong</td>
-            </tr>`;
-        });
-        html += `</tbody></table>`;
-        container.innerHTML = html;
-      }
-    }
-
-    function openProfileModal() {
-      renderAnalyticsAndHistory();
-      document.getElementById('profile-modal').classList.remove('hidden');
-    }
-
-    function closeProfileModal() {
-      document.getElementById('profile-modal').classList.add('hidden');
-    }
-
-    function showConcepts(mod) {
-      currentModule = mod;
-      switchView('view-concepts');
-      document.getElementById('concepts-title').innerText = `Module ${mod} Concepts`;
-
-let content = '';
-if (mod === 1) {
-    content = `
-        <div class="space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xl font-bold text-indigo-400 mb-2">Interactive Instruction Cycle Simulator</h3>
-                <p class="text-slate-300 text-sm mb-6">Click the buttons below to step through the CPU instruction cycle and see the active datapath signals.</p>
+            document.getElementById('stat-total-quizzes').innerText = history.length;
+            
+            if (history.length > 0) {
+                const best = Math.max(...history.map(h => h.score));
+                const totalCorr = history.reduce((sum, h) => sum + h.correct, 0);
+                const avgAcc = Math.round(history.reduce((sum, h) => sum + h.accuracy, 0) / history.length);
                 
-                <div class="grid grid-cols-4 gap-3 mb-6">
-                    <button onclick="runCycleStep(1)" id="btn-step-1" class="p-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm transition shadow-lg">1. Fetch</button>
-                    <button onclick="runCycleStep(2)" id="btn-step-2" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">2. Decode</button>
-                    <button onclick="runCycleStep(3)" id="btn-step-3" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">3. Execute</button>
-                    <button onclick="runCycleStep(4)" id="btn-step-4" class="p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600">4. Writeback</button>
+                document.getElementById('stat-best-score').innerText = `${best} / 40`;
+                document.getElementById('stat-avg-accuracy').innerText = `${avgAcc}%`;
+                document.getElementById('stat-total-correct').innerText = totalCorr;
+
+                const historyList = document.getElementById('quiz-history-list');
+                historyList.innerHTML = history.slice(-5).reverse().map(h => `
+                    <div class="bg-slate-900 border border-slate-700/70 p-3.5 rounded-xl flex items-center justify-between text-xs">
+                        <div>
+                            <span class="font-bold text-indigo-400">Module ${h.module} Quiz</span>
+                            <span class="text-slate-400 ml-2">${h.date}</span>
+                        </div>
+                        <div class="flex items-center space-x-4 font-mono">
+                            <span class="text-slate-200">Score: <strong class="text-white">${h.score}/40</strong></span>
+                            <span class="text-emerald-400">${h.accuracy}% Acc</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('stat-best-score').innerText = `0 / 40`;
+                document.getElementById('stat-avg-accuracy').innerText = `0%`;
+                document.getElementById('stat-total-correct').innerText = `0`;
+                document.getElementById('quiz-history-list').innerHTML = `<p class="text-xs text-slate-500 italic p-3 text-center bg-slate-900 rounded-xl">No quiz attempts recorded yet. Take a quiz to populate your analytics!</p>`;
+            }
+
+            switchView('profile');
+        }
+
+        function showConcepts(mod) {
+            currentModule = mod;
+            document.getElementById('concept-title').innerText = `Module ${mod} Interactive Visualizers`;
+            const container = document.getElementById('concept-content');
+            
+            if (mod === 1) {
+                container.innerHTML = `
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                        <h3 class="text-xl font-bold text-indigo-400">Interactive Instruction Cycle Simulator</h3>
+                        <p class="text-slate-300 text-xs">Click step buttons below to test and observe datapath signals.</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <button onclick="runCycleStep(1)" class="p-2.5 rounded-xl font-semibold text-xs bg-indigo-600 text-white" id="btn-c1">1. Fetch</button>
+                            <button onclick="runCycleStep(2)" class="p-2.5 rounded-xl font-semibold text-xs bg-slate-700 text-slate-300" id="btn-c2">2. Decode</button>
+                            <button onclick="runCycleStep(3)" class="p-2.5 rounded-xl font-semibold text-xs bg-slate-700 text-slate-300" id="btn-c3">3. Execute</button>
+                            <button onclick="runCycleStep(4)" class="p-2.5 rounded-xl font-semibold text-xs bg-slate-700 text-slate-300" id="btn-c4">4. Writeback</button>
+                        </div>
+                        <div id="simulation-screen" class="bg-slate-900 border border-indigo-500/40 rounded-xl p-4 text-indigo-200 font-mono text-xs">
+                            <span class="text-indigo-400 font-bold uppercase tracking-wider block mb-1">[ Step 1: Fetch Cycle ]</span>
+                            Program Counter (PC) → MAR → Memory Access → MDR → CIR. Instruction opcode loaded into Control Unit.
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                        <h3 class="text-xl font-bold text-indigo-400"><i class="fa-solid fa-cubes mr-2"></i>Stack Push & Pop Visualizer</h3>
+                        <p class="text-slate-300 text-xs">Test stack operations dynamically!</p>
+                        <div class="flex flex-col sm:flex-row gap-6 items-center">
+                            <div class="w-40 flex flex-col items-center">
+                                <div id="stack-box" class="w-full h-52 border-2 border-dashed border-indigo-500/50 rounded-xl p-2 flex flex-col-reverse space-y-2 space-y-reverse bg-slate-900 overflow-y-auto"></div>
+                                <span class="text-[11px] text-slate-400 mt-2 font-mono">Stack Top Pointer</span>
+                            </div>
+                            <div class="flex-1 w-full space-y-3">
+                                <div class="flex space-x-2">
+                                    <input type="number" id="stack-input" placeholder="Enter integer value" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                                    <button onclick="pushStack()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-xl text-xs font-semibold text-white transition">PUSH</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="popStack()" class="bg-slate-700 hover:bg-slate-600 py-2 rounded-xl text-xs font-semibold text-white transition">POP</button>
+                                    <button onclick="addStack()" class="bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl text-xs font-semibold text-white transition">ADD (Top 2)</button>
+                                </div>
+                                <div id="stack-log" class="text-[11px] font-mono bg-slate-900 p-3 rounded-xl border border-slate-700 text-slate-300 h-24 overflow-y-auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                renderStack();
+            } else {
+                container.innerHTML = `
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-sliders text-purple-400 mr-2"></i>5-Stage RISC Pipeline Visualizer</h3>
+                        <div class="overflow-x-auto mt-4">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-400 border-b border-slate-700">
+                                        <th class="p-2 text-left">Instruction</th>
+                                        <th class="p-2">Clock 1</th>
+                                        <th class="p-2">Clock 2</th>
+                                        <th class="p-2">Clock 3</th>
+                                        <th class="p-2">Clock 4</th>
+                                        <th class="p-2">Clock 5</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-700/50 font-mono">
+                                    <tr>
+                                        <td class="p-2 text-left text-indigo-400 font-bold">1. ADD R1, R2, R3</td>
+                                        <td class="p-2 bg-indigo-900/40 text-indigo-300">IF</td>
+                                        <td class="p-2 bg-blue-900/40 text-blue-300">ID</td>
+                                        <td class="p-2 bg-purple-900/40 text-purple-300">EX</td>
+                                        <td class="p-2 bg-pink-900/40 text-pink-300">MEM</td>
+                                        <td class="p-2 bg-emerald-900/40 text-emerald-300">WB</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-left text-purple-400 font-bold">2. SUB R4, R1, R5</td>
+                                        <td class="p-2 text-slate-600">-</td>
+                                        <td class="p-2 bg-indigo-900/40 text-indigo-300">IF</td>
+                                        <td class="p-2 bg-amber-900/40 text-amber-300 border border-amber-500/50">STALL</td>
+                                        <td class="p-2 bg-blue-900/40 text-blue-300">ID</td>
+                                        <td class="p-2 bg-purple-900/40 text-purple-300">EX</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            switchView('concepts');
+        }
+
+        function runCycleStep(step) {
+            for(let i=1; i<=4; i++) {
+                const btn = document.getElementById(`btn-c${i}`);
+                if(btn) btn.className = "p-2.5 rounded-xl font-semibold text-xs bg-slate-700 text-slate-300";
+            }
+            const activeBtn = document.getElementById(`btn-c${step}`);
+            if(activeBtn) activeBtn.className = "p-2.5 rounded-xl font-semibold text-xs bg-indigo-600 text-white";
+
+            const screens = {
+                1: '<span class="text-indigo-400 font-bold uppercase tracking-wider block mb-1">[ Step 1: Fetch Cycle ]</span> Program Counter (PC) → MAR → Memory Access → MDR → CIR. Instruction opcode loaded into Control Unit.',
+                2: '<span class="text-amber-400 font-bold uppercase tracking-wider block mb-1">[ Step 2: Decode Cycle ]</span> Control Unit analyzes opcode in CIR, identifies instruction type, source registers, and prepares ALU signals.',
+                3: '<span class="text-emerald-400 font-bold uppercase tracking-wider block mb-1">[ Step 3: Execute Cycle ]</span> ALU receives operands from registers, performs arithmetic/logic operations, and sets status flags.',
+                4: '<span class="text-blue-400 font-bold uppercase tracking-wider block mb-1">[ Step 4: Writeback Cycle ]</span> Result data written back to destination register or memory location. Program Counter (PC) increments.'
+            };
+
+            const screen = document.getElementById('simulation-screen');
+            if(screen) {
+                screen.style.opacity = '0.3';
+                setTimeout(() => {
+                    screen.innerHTML = screens[step];
+                    screen.style.opacity = '1';
+                }, 150);
+            }
+        }
+
+        function pushStack() {
+            const inputEl = document.getElementById('stack-input');
+            const val = inputEl.value;
+            if (val !== '') {
+                if (stack.length >= 5) {
+                    stackLogArr.push('Error: Stack Overflow! Max 5 items allowed.');
+                } else {
+                    stack.push(parseInt(val, 10));
+                    stackLogArr.push(`PUSH ${val} -> Stack top updated.`);
+                }
+                inputEl.value = '';
+                renderStack();
+            }
+        }
+
+        function popStack() {
+            if (stack.length === 0) {
+                stackLogArr.push('Error: Stack Underflow! Stack is empty.');
+            } else {
+                const popped = stack.pop();
+                stackLogArr.push(`POP -> Removed value ${popped}.`);
+            }
+            renderStack();
+        }
+
+        function addStack() {
+            if (stack.length < 2) {
+                stackLogArr.push('Error: ADD requires at least 2 operands on stack.');
+            } else {
+                const b = stack.pop();
+                const a = stack.pop();
+                const res = a + b;
+                stack.push(res);
+                stackLogArr.push(`ADD -> Popped ${a} & ${b}, PUSHED result ${res}.`);
+            }
+            renderStack();
+        }
+
+        function renderStack() {
+            const box = document.getElementById('stack-box');
+            if(!box) return;
+            box.innerHTML = stack.map((val, idx) => `
+                <div class="bg-indigo-600 text-white font-mono text-center text-xs py-1.5 rounded-lg font-bold border border-indigo-400">
+                    [${idx}] ${val}
                 </div>
-
-                <div id="simulation-screen" class="bg-slate-900 border border-indigo-500/40 rounded-xl p-6 text-indigo-200 font-mono text-sm shadow-inner transition-all duration-300">
-                    <span class="text-indigo-400 font-bold uppercase tracking-wider block mb-2">[ Step 1: Fetch Cycle Active ]</span>
-                    Program Counter (PC) $\rightarrow$ MAR $\rightarrow$ Memory Access $\rightarrow$ MDR $\rightarrow$ CIR. Instruction opcode loaded into the Control Unit.
-                </div>
-            </div>
-        </div>
-    `;
-} else {
-    content = `
-        <div class="space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xl font-bold text-emerald-400 mb-2">Module ${mod} Interactive Simulation</h3>
-                <p class="text-slate-300 text-sm mb-4">Interactive module components and visualizer controls active.</p>
-            </div>
-        </div>
-    `;
-}
-
-document.getElementById('concepts-content').innerHTML = content;
-function runCycleStep(step) {
-    // Reset button styles
-    for (let i = 1; i <= 4; i++) {
-        const btn = document.getElementById(`btn-step-${i}`);
-        if (btn) {
-            btn.className = i === step 
-                ? "p-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm transition shadow-lg scale-105" 
-                : "p-3 rounded-xl bg-slate-700 text-slate-300 font-semibold text-sm transition hover:bg-slate-600";
+            `).join('');
+            const logDiv = document.getElementById('stack-log');
+            if(logDiv) {
+                logDiv.innerHTML = stackLogArr.map(l => `<div>&gt; ${l}</div>`).join('');
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
         }
-    }
 
-    const screens = {
-        1: '<span class="text-indigo-400 font-bold uppercase tracking-wider block mb-2">[ Step 1: Fetch Cycle Active ]</span>Program Counter (PC) $\rightarrow$ MAR $\rightarrow$ Memory Access $\rightarrow$ MDR $\rightarrow$ CIR. Instruction opcode loaded into the Control Unit.',
-        2: '<span class="text-amber-400 font-bold uppercase tracking-wider block mb-2">[ Step 2: Decode Cycle Active ]</span>Control Unit analyzes the opcode in CIR. Identifies instruction type, source registers, and prepares ALU control signals.',
-        3: '<span class="text-emerald-400 font-bold uppercase tracking-wider block mb-2">[ Step 3: Execute Cycle Active ]</span>ALU receives operands from registers, performs arithmetic/logic operations, and sets status flags (Zero, Carry, Overflow).',
-        4: '<span class="text-blue-400 font-bold uppercase tracking-wider block mb-2">[ Step 4: Writeback Cycle Active ]</span>Result data written back to destination register or memory location. Program Counter (PC) increments for the next instruction.'
-    };
-
-    const screen = document.getElementById('simulation-screen');
-    if (screen) {
-        screen.style.opacity = '0.3';
-        setTimeout(() => {
-            screen.innerHTML = screens[step];
-            screen.style.opacity = '1';
-        }, 150);
-    }
-}
-    }
-
-    function startQuiz(mod) {
-      currentModule = mod;
-      quizState = {
-        questions: questionBank[mod],
-        index: 0,
-        score: 0,
-        correct: 0,
-        wrong: 0,
-        selected: null,
-        timeLeft: 60
-      };
-      switchView('view-quiz');
-      document.getElementById('quiz-module-badge').innerText = `Module ${mod} Quiz`;
-      renderQuestion();
-      startTimer();
-    }
-
-    function startTimer() {
-      clearInterval(quizState.timer);
-      quizState.timeLeft = 60;
-      document.getElementById('quiz-timer').innerText = `${quizState.timeLeft}s`;
-      quizState.timer = setInterval(() => {
-        quizState.timeLeft--;
-        document.getElementById('quiz-timer').innerText = `${quizState.timeLeft}s`;
-        if (quizState.timeLeft <= 0) {
-          submitAnswer();
+        function startQuiz(mod) {
+            currentModule = mod;
+            quizIndex = 0;
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            document.getElementById('quiz-mod-badge').innerText = `Module ${mod} Quiz`;
+            switchView('quiz');
+            loadQuestion();
         }
-      }, 1000);
-    }
 
-    function renderQuestion() {
-      const q = quizState.questions[quizState.index];
-      document.getElementById('quiz-progress').innerText = `${quizState.index + 1} / ${quizState.questions.length}`;
-      document.getElementById('quiz-question-text').innerText = `${quizState.index + 1}. ${q.q}`;
-
-      const optionsContainer = document.getElementById('quiz-options-container');
-      optionsContainer.innerHTML = '';
-      quizState.selected = null;
-
-      q.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-700/60';
-        btn.onclick = () => selectOption(idx, btn);
-        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span><i class="fa-regular fa-circle text-slate-500"></i>`;
-        optionsContainer.appendChild(btn);
-      });
-    }
-
-    function selectOption(index, btn) {
-      quizState.selected = index;
-      const buttons = document.getElementById('quiz-options-container').children;
-      Array.from(buttons).forEach((b, i) => {
-        if (i === index) {
-          b.className = 'w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border border-indigo-500 bg-indigo-900/30 text-white';
-          b.querySelector('i').className = 'fa-solid fa-circle text-indigo-400';
-        } else {
-          b.className = 'w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-700/60';
-          b.querySelector('i').className = 'fa-regular fa-circle text-slate-500';
+        function loadQuestion() {
+            const questions = questionBank[currentModule];
+            if (quizIndex >= questions.length) {
+                finishQuiz();
+                return;
+            }
+            const q = questions[quizIndex];
+            document.getElementById('quiz-progress').innerText = `${quizIndex + 1} / 10`;
+            document.getElementById('quiz-question-text').innerText = `${quizIndex + 1}. ${q.q}`;
+            
+            const optContainer = document.getElementById('quiz-options-container');
+            optContainer.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectOption(${idx})" id="opt-${idx}" class="w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-700/60">
+                    <span>${String.fromCharCode(65 + idx)}. ${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-500" id="icon-${idx}"></i>
+                </button>
+            `).join('');
+            selectedOpt = null;
+            resetTimer();
         }
-      });
-    }
 
-    function submitAnswer() {
-      clearInterval(quizState.timer);
-      const q = quizState.questions[quizState.index];
-
-      if (quizState.selected !== null) {
-        if (quizState.selected === q.answer) {
-          quizState.score += 4;
-          quizState.correct += 1;
-        } else {
-          quizState.score -= 1;
-          quizState.wrong += 1;
+        function selectOption(idx) {
+            selectedOpt = idx;
+            const q = questionBank[currentModule][quizIndex];
+            q.options.forEach((_, i) => {
+                const btn = document.getElementById(`opt-${i}`);
+                const icon = document.getElementById(`icon-${i}`);
+                if (i === idx) {
+                    btn.className = "w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border border-indigo-500 bg-indigo-900/30 text-white";
+                    icon.className = "fa-solid fa-circle text-indigo-400";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-xl text-sm font-medium transition flex items-center justify-between border bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-700/60";
+                    icon.className = "fa-regular fa-circle text-slate-500";
+                }
+            });
         }
-      }
 
-      if (quizState.index + 1 < quizState.questions.length) {
-        quizState.index++;
-        renderQuestion();
-        startTimer();
-      } else {
-        finishQuiz();
-      }
-    }
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 60;
+            document.getElementById('quiz-timer').innerText = `${timeLeft}s`;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('quiz-timer').innerText = `${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitAnswer();
+                }
+            }, 1000);
+        }
 
-    function finishQuiz() {
-      const accuracy = Math.max(0, Math.round((quizState.correct / quizState.questions.length) * 100));
-      
-      const record = {
-        id: Date.now(),
-        date: new Date().toLocaleString(),
-        module: currentModule,
-        score: quizState.score,
-        correct: quizState.correct,
-        wrong: quizState.wrong,
-        accuracy: accuracy
-      };
+        function submitAnswer() {
+            clearInterval(timerInterval);
+            const q = questionBank[currentModule][quizIndex];
+            if (selectedOpt !== null) {
+                if (selectedOpt === q.answer) {
+                    score += 4;
+                    correctCount++;
+                } else {
+                    score -= 1;
+                    wrongCount++;
+                }
+            } else {
+                wrongCount++;
+            }
+            quizIndex++;
+            loadQuestion();
+        }
 
-      const history = getHistory();
-      history.unshift(record);
-      localStorage.setItem('coa_history', JSON.stringify(history));
+        function finishQuiz() {
+            document.getElementById('res-score').innerText = `${score} / 40`;
+            const acc = Math.max(0, Math.round((correctCount / 10) * 100));
+            document.getElementById('res-accuracy').innerText = `${acc}%`;
+            document.getElementById('res-breakdown').innerText = `${correctCount} / ${wrongCount}`;
 
-      document.getElementById('result-score').innerText = `${quizState.score} / 40`;
-      document.getElementById('result-accuracy').innerText = `${accuracy}%`;
-      document.getElementById('result-breakdown').innerText = `${quizState.correct} Correct / ${quizState.wrong} Wrong`;
+            // Save Attempt to LocalStorage Analytics
+            const historyKey = `coa_history_${currentUser.srno}`;
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+            
+            const attemptRecord = {
+                module: currentModule,
+                score: score,
+                accuracy: acc,
+                correct: correctCount,
+                wrong: wrongCount,
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            history.push(attemptRecord);
+            localStorage.setItem(historyKey, JSON.stringify(history));
 
-      switchView('view-results');
-    }
-  </script>
+            switchView('results');
+        }
+    </script>
 </body>
 </html>
