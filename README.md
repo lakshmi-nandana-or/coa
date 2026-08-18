@@ -1,3 +1,1 @@
-# COA Visualizer & Evaluated Quiz Portal
-
-**COA Visualizer & Evaluated Quiz Portal** is a self-contained, web-based educational tool built as a single-file application using standard HTML, Tailwind CSS, and Vanilla JavaScript. Designed to run directly in any web browser without requiring a backend server, database, or installation, it helps strengthen Computer Organization and Architecture fundamentals through structured concept breakdowns across core modules and a full-featured quiz engine—complete with timed questions, negative scoring rules, automated analytics, and local browser storage for attempt tracking.
+# coa
